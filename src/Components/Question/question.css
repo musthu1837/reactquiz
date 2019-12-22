@@ -1,0 +1,22 @@
+.qs-container{
+    max-height: 400px;
+    min-height: 400px;
+}
+.qs-number{
+  margin: 10px;
+  border: 1px solid #d6d6c2;
+  padding: 10px;
+  font-weight: bold;
+}
+.qs-header{
+  margin: 15px;
+  margin-top: 18px;
+  font-size: 16px;
+}
+.qs-options{
+  margin-top: -5px;
+  margin-left: 15px;
+}
+.ui.radio.checkbox{
+  margin: 10px
+}

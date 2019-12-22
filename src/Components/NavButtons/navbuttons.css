@@ -1,0 +1,12 @@
+.nav-container{
+    max-height: 50px;
+    min-height: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.button-group1{
+  float: left;
+}
+.button-group2{
+  float: right;
+}
