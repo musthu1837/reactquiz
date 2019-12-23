@@ -35,7 +35,7 @@ class Legend extends Component{
                 </Grid.Row>
                 <br/>
                 <Grid.Row>
-                  <Label size="large" circular/><br/>
+                  <Label color="grey" size="large" circular/><br/>
                   <b>Not Visited</b>
                 </Grid.Row>
               </Grid.Column>

@@ -11,10 +11,14 @@ class Question extends Component{
   }
   render(){
     const question = this.props.question
+    const questionIndex = this.props.index
+    const options = question.answers
+    const answer = this.props.answer
+    const handleAnswerChange = this.props.handleAnswerChange
     return(
       <div className='qs-container'>
         <div className='qs-number'>
-          Question No. {this.props.index + 1}
+          Question No. { questionIndex + 1}
         </div>
         <div className='qs-header'>
           { question.question }
@@ -24,7 +28,13 @@ class Question extends Component{
             Array.apply(null, Array(4)).map(function(value, index){
                 return(
                   <div key={index}>
-                    <Radio label={question.answers[index]} onChange={event => console.log(event.target.value)}/><br/>
+                    <Radio 
+                      checked = { index === answer.answeredIndex }
+                      value = { index }
+                      label = {question.answers[index]} 
+                      onChange = {(e, { name, value}) => handleAnswerChange(questionIndex, index)}
+                    />
+                    <br/>
                   </div>
                 )
               })

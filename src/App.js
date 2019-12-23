@@ -14,16 +14,38 @@ class App extends Component {
     super(props);
     this.state = {
       questionIndex: 0,
+      answers: answers
     }
   }
   
-  handleNext = (event) => {
-    this.setState({questionIndex: this.state.questionIndex + 1})
+  handleNext = (questionIndex) => {
+    let answers = this.state.answers
+    let answeredIndex = answers.GS[questionIndex].answeredIndex
+    answers.GS[questionIndex].answeredIndex = answeredIndex == null ? -1 : answeredIndex
+    this.setState({questionIndex: questionIndex + 1 , answers})
   }
 
-  handlePrevious = (event) => {
-    this.setState({questionIndex: this.state.questionIndex - 1})
+  handlePrevious = (questionIndex) => {
+    let answers = this.state.answers
+    let answeredIndex = answers.GS[questionIndex].answeredIndex
+    answers.GS[questionIndex].answeredIndex = answeredIndex == null ? -1 : answeredIndex
+    this.setState({questionIndex: questionIndex - 1 , answers})
   }
+
+  handleChangeAnswer = (questionIndex, answeredIndex) => {
+    let answers = this.state.answers
+    answers.GS[questionIndex].answeredIndex = answeredIndex
+    this.setState({answers: answers})
+  }
+
+  handleChangeQuestion = (event) => {
+    let questionIndex = this.state.questionIndex
+    let answers = this.state.answers
+    let answeredIndex = answers.GS[questionIndex].answeredIndex
+    answers.GS[questionIndex].answeredIndex = answeredIndex == null ? -1 : answeredIndex
+    this.setState({questionIndex: event.target.value, answers})
+  }
+
   render(){
     return (
       <div className="App">
@@ -37,8 +59,10 @@ class App extends Component {
           <Grid.Column width={11} style = {{"marginLeft": "30px"}}>
             <Grid.Row>
               <Question
-                question={data.GS[this.state.questionIndex]}
-                index={this.state.questionIndex}
+                question = {data.GS[this.state.questionIndex]}
+                answer = {this.state.answers.GS[this.state.questionIndex]}
+                index = {this.state.questionIndex}
+                handleAnswerChange = {this.handleChangeAnswer}
               />
             </Grid.Row>
             <Grid.Row>
@@ -47,6 +71,8 @@ class App extends Component {
                 previousQuestion={this.handlePrevious}
                 nextDisabled = {this.state.questionIndex === GSlength - 1 }
                 previousDisabled = {this.state.questionIndex === 0 }
+                handleAnswerChange = {this.handleChangeAnswer} 
+                index = {this.state.questionIndex}               
               />
             </Grid.Row>
           </Grid.Column>
@@ -56,7 +82,7 @@ class App extends Component {
             </Grid.Row>
             <Grid.Row>
               <QuestionPalette
-                changeQuestionIndex = { (event) => this.setState({questionIndex: Number(event.target.value)})}
+                changeQuestionIndex = { this.handleChangeQuestion }
                 totalQuestions = { GSlength }
                 answers = {answers}
               />

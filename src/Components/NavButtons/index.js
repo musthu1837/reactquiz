@@ -14,26 +14,34 @@ class NavButtons extends Component{
     const Previous = this.props.previousQuestion;
     const nextDisabled = this.props.nextDisabled;
     const previousDisabled = this.props.previousDisabled;
+    const handleAnswerChange = this.props.handleAnswerChange;
+    const questionIndex = this.props.index;
     return(
       <div className='nav-container'>
         <div className="button-group1">
           <Button
-            onClick = { Previous }
+            onClick = { (event) => Previous(questionIndex) }
             disabled = { previousDisabled }
             primary
           >
             Previous
           </Button>
-          <Button color="grey">Clear Response</Button>
+          <Button 
+            color="grey"
+            onClick = {(event) => handleAnswerChange(questionIndex, -1 )}
+          >
+            Clear Response
+          </Button>
         </div>
         <div className="button-group2">
           <Button color="purple">Mark for review & Next</Button>
           <Button
-            onClick = { Next }
+            //onClick = { Next }
+            onClick = { (event) => Next(questionIndex) }
             disabled = { nextDisabled } 
             primary
           >
-            Save & Next
+            Next
           </Button>
         </div>
       </div>
