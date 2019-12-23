@@ -13,7 +13,7 @@ class Profile extends Component{
         <div className="profile-main-container">
           <Item.Group>
             <Item>
-              <Item.Image size='tiny' src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQ9ruNvSkRedN7TcZOOLxPLjT9PPK_T7VwHXk-v-F95yPhQCSYCQ&s' />
+              <Item.Image className="profile-image" size='tiny' src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQ9ruNvSkRedN7TcZOOLxPLjT9PPK_T7VwHXk-v-F95yPhQCSYCQ&s' />
               <Item.Content header='Time Left: 28:28' meta='Musthafa Mohammad' />
             </Item>
           </Item.Group>

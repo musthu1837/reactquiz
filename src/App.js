@@ -7,6 +7,7 @@ import Legend from './Components/Legend'
 import QuestionPalette from './Components/QuestionPalette'
 import Profile from './Components/Profile'
 import data from './data.json'
+import answers from './answers.json'
 const GSlength = data.GS.length
 class App extends Component {
   constructor(props){
@@ -15,7 +16,7 @@ class App extends Component {
       questionIndex: 0,
     }
   }
-
+  
   handleNext = (event) => {
     this.setState({questionIndex: this.state.questionIndex + 1})
   }
@@ -54,7 +55,11 @@ class App extends Component {
               <Profile/>
             </Grid.Row>
             <Grid.Row>
-              <QuestionPalette/>
+              <QuestionPalette
+                changeQuestionIndex = { (event) => this.setState({questionIndex: Number(event.target.value)})}
+                totalQuestions = { GSlength }
+                answers = {answers}
+              />
             </Grid.Row>
             <Grid.Row>
               <Legend/>

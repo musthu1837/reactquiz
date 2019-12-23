@@ -1,4 +1,8 @@
 .profile-main-container{
   max-height: 75px;
   min-height: 75px;
+  max-width: 350px;
+  min-width: 250px;
+  border: 1px solid grey;
+  padding: 10px;
 }
