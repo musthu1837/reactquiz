@@ -10,17 +10,12 @@ class NavButtons extends Component{
     }
   }
   render(){
-    const Next = this.props.nextQuestion;
-    const Previous = this.props.previousQuestion;
-    const nextDisabled = this.props.nextDisabled;
-    const previousDisabled = this.props.previousDisabled;
-    const handleAnswerChange = this.props.handleAnswerChange;
-    const questionIndex = this.props.index;
+    const { handleNext, handlePrevious, nextDisabled, previousDisabled, handleAnswerChange, handleMarkQuestion} = this.props
     return(
       <div className='nav-container'>
         <div className="button-group1">
           <Button
-            onClick = { (event) => Previous(questionIndex) }
+            onClick = { handlePrevious }
             disabled = { previousDisabled }
             primary
           >
@@ -28,16 +23,20 @@ class NavButtons extends Component{
           </Button>
           <Button 
             color="grey"
-            onClick = {(event) => handleAnswerChange(questionIndex, -1 )}
+            onClick = {(event) => handleAnswerChange(-1 )}
           >
             Clear Response
           </Button>
         </div>
         <div className="button-group2">
-          <Button color="purple">Mark for review & Next</Button>
           <Button
-            //onClick = { Next }
-            onClick = { (event) => Next(questionIndex) }
+            onClick = { handleMarkQuestion } 
+            color="purple"
+          >
+            Mark for review
+          </Button>
+          <Button
+            onClick = { handleNext }
             disabled = { nextDisabled } 
             primary
           >

@@ -10,11 +10,7 @@ class Question extends Component{
     }
   }
   render(){
-    const question = this.props.question
-    const questionIndex = this.props.index
-    const options = question.answers
-    const answer = this.props.answer
-    const handleAnswerChange = this.props.handleAnswerChange
+    const { question, questionIndex, answer, handleAnswerChange } = this.props  
     return(
       <div className='qs-container'>
         <div className='qs-number'>

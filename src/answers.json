@@ -1,53 +1,52 @@
 {
-    "GS": [
-      {
-        "answeredIndex": null,
-        "visited": false
-      },
-      {
-        "answeredIndex": null,
-        "visited": false
-      },
-      {
-        "answeredIndex": null,
-        "visited": false
-      }, 
-      {
-        "answeredIndex": null,
-        "visited": false
-      },
-      {
-        "answeredIndex": null,
-        "visited": false
-      },
-      {
-        "answeredIndex": null,
-        "visited": false
-      },
-      {
-        "answeredIndex": null,
-        "visited": false
-      },
-      {
-        "answeredIndex": null,
-        "visited": false
-      },
-      {
-        "answeredIndex": null,
-        "visited": false
-      },
-      {
-        "answeredIndex": null,
-        "visited": false
-      },
-      {
-        "answeredIndex": null,
-        "visited": false
-      },
-      {
-        "answeredIndex": null,
-        "visited": false
-      } 
-    ]
+  "GS": [
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    },
+    {
+      "answeredIndex": null,
+      "mark": false
+    }
+  ]
 }
-    

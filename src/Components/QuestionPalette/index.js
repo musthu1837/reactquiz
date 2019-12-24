@@ -10,9 +10,7 @@ class QuestionPalette extends Component{
     }
   }
   render(){
-    const change = this.props.changeQuestionIndex;
-    const totalQuestions = this.props.totalQuestions;
-    const answers = this.props.answers;
+    const { handleJumpQuestion, totalQuestions, answers } = this.props
     return(
         <div className="main-container">
           <div className="qp-header">
@@ -22,14 +20,14 @@ class QuestionPalette extends Component{
           {
             Array.apply(null, Array(totalQuestions)).map(function(value, index){           
                 const answeredIndex = answers.GS[index].answeredIndex
+                const mark = answers.GS[index].mark
                 return ( 
                 <Button 
                   value = {index}
-                  onClick = {change}
+                  onClick = {handleJumpQuestion}
                   key={index} 
-                  style={{"radius":"3px","margin": "10px","width": "50px","alignContent": "center"}} 
-                  
-                  color = { (answeredIndex == null) ? null : (answeredIndex >= 0) ? "green" : "red"}
+                  style={{"radius":"3px","margin": "10px","width": "50px","alignContent": "center"}}                   
+                  color = { (mark) ? "purple":(answeredIndex == null) ? null : (answeredIndex >= 0) ? "green" : "red"}
                 >
                   {index + 1}
                 </Button>
