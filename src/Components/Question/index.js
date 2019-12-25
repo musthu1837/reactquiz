@@ -28,7 +28,7 @@ class Question extends Component{
                       checked = { index === answer.answeredIndex }
                       value = { index }
                       label = {question.answers[index]} 
-                      onChange = {(e, { name, value}) => handleAnswerChange(questionIndex, index)}
+                      onChange = {(e, { name, value}) => handleAnswerChange(Number(value))}
                     />
                     <br/>
                   </div>

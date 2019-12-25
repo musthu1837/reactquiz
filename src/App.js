@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Menu, Grid, Button} from 'semantic-ui-react'
+import {Menu, Grid, Button, Modal,Image, Header} from 'semantic-ui-react'
 import './App.css';
 import Question from './Components/Question'
 import NavButtons from './Components/NavButtons'
@@ -15,8 +15,9 @@ class App extends Component {
     this.state = {
       questionIndex: 0,
       answers: answers,
-      minutes: GSlength - 1,
-      seconds: 59
+      minutes:  GSlength,
+      seconds: 0,
+      examStarted: false
     }
   }
   
@@ -56,6 +57,35 @@ class App extends Component {
     answers.GS[questionIndex].mark = (!answers.GS[questionIndex].mark)
     this.setState({answers: answers}) 
   }
+  startExam = (event) => {
+    this.setState({examStarted: true})
+    let Class = this
+    let Timer = setInterval(()=>{
+      let minutes = Class.state.minutes;
+      let seconds = Class.state.seconds;
+      if (minutes === 0 && seconds === 0) {
+        clearInterval(Timer)
+        window.alert("Exam is completed")
+        this.setState({
+          examStarted: false,
+          minutes:  GSlength - 1,
+          seconds: 59          
+        })
+      }
+      else if(seconds === 0) {
+        Class.setState({
+          "minutes": minutes - 1,
+          "seconds": 59
+        })
+      }
+      else {
+        Class.setState({
+          "seconds": seconds - 1
+        })      
+      }
+
+    },1000)
+  }
 
   render(){
     return (
@@ -65,9 +95,27 @@ class App extends Component {
             <b>React QUIZ</b>
           </Menu.Item>
           <Menu.Menu position="right">
-            <Menu.Item>
-              <Button color="green">Submit</Button>
-            </Menu.Item>            
+            {(this.state.examStarted) ? 
+              <Menu.Item>
+                <Modal trigger={<Button color="red">Submit</Button>} centered={false}>
+                  <Modal.Header>Select a Photo</Modal.Header>
+                  <Modal.Content image>
+                    <Image wrapped size='medium' src='https://react.semantic-ui.encrypted/images/avatar/large/rachel.png'/>
+                    <Modal.Description>
+                      <Header>Your Result!!!!</Header>
+                      <p>
+                        We've found the following gravatar image associated with your e-mail
+                        address.
+                      </p>
+                      <p>Is it okay to use this photo?</p>
+                    </Modal.Description>
+                  </Modal.Content>
+                </Modal>                
+              </Menu.Item>: 
+              <Menu.Item>
+                <Button color="green" onClick={this.startExam}>Start</Button>
+              </Menu.Item>
+            }           
           </Menu.Menu>
         </Menu>
         <br/>
