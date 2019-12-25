@@ -22,7 +22,7 @@ class NavButtons extends Component{
             Previous
           </Button>
           <Button 
-            color="grey"
+            color="black"
             onClick = {(event) => handleAnswerChange(-1 )}
           >
             Clear Response

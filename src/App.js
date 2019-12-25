@@ -68,8 +68,8 @@ class App extends Component {
         window.alert("Exam is completed")
         this.setState({
           examStarted: false,
-          minutes:  GSlength - 1,
-          seconds: 59          
+          minutes:  GSlength,
+          seconds: 0          
         })
       }
       else if(seconds === 0) {
