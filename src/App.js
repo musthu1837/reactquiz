@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {Menu, Grid, Button, Modal,Image, Header} from 'semantic-ui-react'
+import { Pie } from 'react-chartjs-2';
+import {Menu, Grid, Button, Modal, Image, Header} from 'semantic-ui-react'
 import './App.css';
 import Question from './Components/Question'
 import NavButtons from './Components/NavButtons'
@@ -8,7 +9,11 @@ import QuestionPalette from './Components/QuestionPalette'
 import Profile from './Components/Profile'
 import data from './data.json'
 import answers from './answers.json'
+
+const labels = ["Right answers", "Wrong answers", "Unanswered"]
+const colors = ['green', 'red', 'grey'] 
 const GSlength = data.GS.length
+
 class App extends Component {
   constructor(props){
     super(props);
@@ -17,8 +22,10 @@ class App extends Component {
       answers: answers,
       minutes:  GSlength,
       seconds: 0,
-      examStarted: false
+      examStarted: false,
+      result: [8, 2, 2]
     }
+    this.Timer = null;
   }
   
   handleNext = (event) => {
@@ -57,14 +64,15 @@ class App extends Component {
     answers.GS[questionIndex].mark = (!answers.GS[questionIndex].mark)
     this.setState({answers: answers}) 
   }
+
   startExam = (event) => {
     this.setState({examStarted: true})
     let Class = this
-    let Timer = setInterval(()=>{
+    this.Timer = setInterval(()=>{
       let minutes = Class.state.minutes;
       let seconds = Class.state.seconds;
       if (minutes === 0 && seconds === 0) {
-        clearInterval(Timer)
+        clearInterval(this.Timer)
         window.alert("Exam is completed")
         this.setState({
           examStarted: false,
@@ -87,6 +95,23 @@ class App extends Component {
     },1000)
   }
 
+  evaluateExam = (event) => {
+    clearInterval(this.Timer)
+    let data1 = [0, 0, 0]
+    for(let i=0; i < GSlength; i++){
+      if(answers.GS[i].answeredIndex == -1 || answers.GS[i].answeredIndex == null){
+        data1[2] = data1[2] + 1  
+      }
+      else if(data.GS[i].correctIndex == answers.GS[i].answeredIndex){
+        data1[0] = data1[0] + 1  
+      }
+      else{
+        data1[1] = data1[1] + 1  
+      }
+    }
+    this.setState({result: data1, minutes: GSlength, seconds: 0})
+  }
+
   render(){
     return (
       <div className="App">
@@ -97,17 +122,22 @@ class App extends Component {
           <Menu.Menu position="right">
             {(this.state.examStarted) ? 
               <Menu.Item>
-                <Modal trigger={<Button color="red">Submit</Button>} centered={false}>
-                  <Modal.Header>Select a Photo</Modal.Header>
+                <Modal style={{"width": "500px"}} trigger={<Button color="red" onClick={this.evaluateExam}>Submit</Button>}>
+                  <Modal.Header>
+                    <h2 style={{"color": "green"}}>Your results.....</h2>
+                  </Modal.Header>                  
                   <Modal.Content image>
-                    <Image wrapped size='medium' src='https://react.semantic-ui.encrypted/images/avatar/large/rachel.png'/>
                     <Modal.Description>
-                      <Header>Your Result!!!!</Header>
                       <p>
-                        We've found the following gravatar image associated with your e-mail
-                        address.
+                        <Pie data={{
+                          labels: labels, 
+                          datasets: [{
+                             data: this.state.result,
+                             backgroundColor: colors
+                          }]
+                        }} 
+                        />
                       </p>
-                      <p>Is it okay to use this photo?</p>
                     </Modal.Description>
                   </Modal.Content>
                 </Modal>                
