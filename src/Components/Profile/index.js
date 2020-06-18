@@ -1,28 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {Item} from 'semantic-ui-react'
+import userIcon from '../asserts/images/usericon.png'
 import './profile.css'
-class Profile extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
-
-    }
-  }
-  render(){
-    const { minutes, seconds } = this.props
-    return(
-        <div className="profile-main-container">
-          <Item.Group>
-            <Item>
-              <Item.Image className="profile-image" size='tiny' src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQ9ruNvSkRedN7TcZOOLxPLjT9PPK_T7VwHXk-v-F95yPhQCSYCQ&s' />
-              <Item.Content 
-                header={`Time Left: ${minutes < 9 ? "0"+minutes: minutes}:${seconds < 9 ? "0"+seconds: seconds}`}
-                 meta='Musthafa Mohammad' />
-            </Item>
-          </Item.Group>
-        </div>
-    );
-  }
+const Profile = (props) => {
+  const { minutes, seconds } = props
+  return(
+      <div className="profile-main-container">
+        <Item.Group>
+          <Item>
+            <Item.Image className="profile-image" size='tiny' src={userIcon} alt="usericon"/>
+            <Item.Content 
+              header={<h3 style={{color: minutes === 0 ? 'red': 'black'}} className="time">{`Time Left: ${minutes <= 9 ? "0"+minutes: minutes}:${seconds <= 9 ? "0"+seconds: seconds}`}</h3>}
+              meta={'Musthafa Mohammad'} />
+          </Item>
+        </Item.Group>
+      </div>
+  );
 }
 
 export default Profile;

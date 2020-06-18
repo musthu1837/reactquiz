@@ -1,6 +1,5 @@
 .main-container{
   max-height: 350px;
-  min-height: 250px;
   margin-top: 20px;
 }
 .qp-header {
@@ -11,7 +10,6 @@
 
 .qp-container {
   max-height: 200px;
-  min-height: 200px;
   max-width: 300px;
   min-width: 250px;
   overflow: auto;

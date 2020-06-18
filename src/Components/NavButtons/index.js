@@ -1,16 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {Button} from 'semantic-ui-react'
 import './navbuttons.css';
 
-class NavButtons extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
+const NavButtons = (props) => {
 
-    }
-  }
-  render(){
-    const { handleNext, handlePrevious, nextDisabled, previousDisabled, handleAnswerChange, handleMarkQuestion} = this.props
+    const { handleNext, handlePrevious, nextDisabled, previousDisabled, handleAnswerChange, handleMarkQuestion} = props
+    
     return(
       <div className='nav-container'>
         <div className="button-group1">
@@ -45,7 +40,6 @@ class NavButtons extends Component{
         </div>
       </div>
     );
-  }
 }
 
 export default NavButtons;

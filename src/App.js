@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Pie } from 'react-chartjs-2';
-import {Menu, Grid, Button, Modal, Image, Header} from 'semantic-ui-react'
+import {Menu, Grid, Button, Modal, Image, Confirm} from 'semantic-ui-react'
 import './App.css';
 import Question from './Components/Question'
 import NavButtons from './Components/NavButtons'
@@ -9,7 +9,7 @@ import QuestionPalette from './Components/QuestionPalette'
 import Profile from './Components/Profile'
 import data from './data.json'
 import answers from './answers.json'
-
+import quizimage from './Components/asserts/images/quiz.png'
 const labels = ["Right answers", "Wrong answers", "Unanswered"]
 const colors = ['green', 'red', 'grey'] 
 const GSlength = data.GS.length
@@ -23,11 +23,24 @@ class App extends Component {
       minutes:  GSlength,
       seconds: 0,
       examStarted: false,
-      result: [8, 2, 2]
+      result: [8, 2, 2],
+      open: false,
+      score: 0,
+      confirm: false
     }
     this.Timer = null;
   }
   
+  componentDidMount(){
+    // let response = window.onbeforeunload = () => "Dude, are you sure you want to leave? Think of the kittens!"
+    // alert(response)
+  }
+
+  onClose = () => {
+    // this.setState({ open: false, examStarted: false, score: 0 })
+    window.location.reload();
+  }
+
   handleNext = (event) => {
     let questionIndex = this.state.questionIndex
     let answers = this.state.answers
@@ -72,13 +85,7 @@ class App extends Component {
       let minutes = Class.state.minutes;
       let seconds = Class.state.seconds;
       if (minutes === 0 && seconds === 0) {
-        clearInterval(this.Timer)
-        window.alert("Exam is completed")
-        this.setState({
-          examStarted: false,
-          minutes:  GSlength,
-          seconds: 0          
-        })
+          this.evaluateExam(null)   
       }
       else if(seconds === 0) {
         Class.setState({
@@ -97,19 +104,21 @@ class App extends Component {
 
   evaluateExam = (event) => {
     clearInterval(this.Timer)
-    let data1 = [0, 0, 0]
+    let graphData = [0, 0, 0]
+    let score = 0
     for(let i=0; i < GSlength; i++){
-      if(answers.GS[i].answeredIndex == -1 || answers.GS[i].answeredIndex == null){
-        data1[2] = data1[2] + 1  
+      if(answers.GS[i].answeredIndex === -1 || answers.GS[i].answeredIndex === null){
+        graphData[2] = graphData[2] + 1  
       }
-      else if(data.GS[i].correctIndex == answers.GS[i].answeredIndex){
-        data1[0] = data1[0] + 1  
+      else if(data.GS[i].correctIndex === answers.GS[i].answeredIndex){
+        graphData[0] = graphData[0] + 1
+        score += data.GS[i].marks
       }
       else{
-        data1[1] = data1[1] + 1  
+        graphData[1] = graphData[1] + 1  
       }
     }
-    this.setState({result: data1, minutes: GSlength, seconds: 0})
+    this.setState({result: graphData, minutes: GSlength, seconds: 0, open: true, score, confirm: false})
   }
 
   render(){
@@ -122,25 +131,7 @@ class App extends Component {
           <Menu.Menu position="right">
             {(this.state.examStarted) ? 
               <Menu.Item>
-                <Modal style={{"width": "500px"}} trigger={<Button color="red" onClick={this.evaluateExam}>Submit</Button>}>
-                  <Modal.Header>
-                    <h2 style={{"color": "green"}}>Your results.....</h2>
-                  </Modal.Header>                  
-                  <Modal.Content image>
-                    <Modal.Description>
-                      <p>
-                        <Pie data={{
-                          labels: labels, 
-                          datasets: [{
-                             data: this.state.result,
-                             backgroundColor: colors
-                          }]
-                        }} 
-                        />
-                      </p>
-                    </Modal.Description>
-                  </Modal.Content>
-                </Modal>                
+                <Button color="red" onClick={(e) => this.setState({confirm: true})}>Finish</Button>               
               </Menu.Item>: 
               <Menu.Item>
                 <Button color="green" onClick={this.startExam}>Start</Button>
@@ -149,7 +140,7 @@ class App extends Component {
           </Menu.Menu>
         </Menu>
         <br/>
-        <Grid divided>
+        {this.state.examStarted ? (<Grid divided>
           <Grid.Column width={11} style = {{"marginLeft": "30px"}}>
             <Grid.Row>
               <Question
@@ -188,7 +179,41 @@ class App extends Component {
               <Legend/>
             </Grid.Row>
           </Grid.Column>
-        </Grid>
+        </Grid>):(<center><br/><br/><br/><Image src = {quizimage} alt = 'quizimage'/></center>)}
+
+        <Modal 
+            style={{"width": "500px"}} 
+            open={this.state.open}
+            closeOnEscape={false}
+            closeOnDimmerClick={false}
+            onClose={this.close}
+            >
+            <Modal.Header>
+              <h2 style={{"color": "green"}}>Your Score is: {this.state.score}</h2>
+            </Modal.Header>                  
+            <Modal.Content image>
+              <Modal.Description>
+                <p>
+                  <Pie data={{
+                    labels: labels, 
+                    datasets: [{
+                        data: this.state.result,
+                        backgroundColor: colors
+                    }]
+                  }} 
+                  />
+                  <br/>
+                  <center><Button color="blue" onClick={this.onClose}>Ok</Button></center>
+                </p>
+              </Modal.Description>
+            </Modal.Content>
+          </Modal> 
+          <Confirm
+          open={this.state.confirm}
+          onCancel={(e) => this.setState({confirm: false})}
+          onConfirm={(e) => this.evaluateExam()}
+          content={'Are you sure want to submit?'}
+          />
       </div>
     );
   }
