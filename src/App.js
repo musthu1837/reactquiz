@@ -1,125 +1,25 @@
 import React, { Component } from 'react';
-import { Pie } from 'react-chartjs-2';
-import {Menu, Grid, Button, Modal, Image, Confirm} from 'semantic-ui-react'
-import './App.css';
-import Question from './Components/Question'
-import NavButtons from './Components/NavButtons'
-import Legend from './Components/Legend'
-import QuestionPalette from './Components/QuestionPalette'
-import Profile from './Components/Profile'
-import data from './data.json'
-import answers from './answers.json'
-import quizimage from './Components/asserts/images/quiz.png'
-const labels = ["Right answers", "Wrong answers", "Unanswered"]
-const colors = ['green', 'red', 'grey'] 
-const GSlength = data.GS.length
+import {Menu, Button, Image, Step} from 'semantic-ui-react'
+
+import quizimage from './asserts/images/quiz.png'
+import Quiz from './Components/Quiz'
+import UserForm from './Components/Form'
+import Instructions from './Components/Instructions'
+import { connect } from 'react-redux'
+import * as QuizActions from './Redux/Actions/quiz-actions'
 
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      questionIndex: 0,
-      answers: answers,
-      minutes:  GSlength,
-      seconds: 0,
-      examStarted: false,
-      result: [8, 2, 2],
-      open: false,
-      score: 0,
       confirm: false
     }
     this.Timer = null;
   }
   
-  componentDidMount(){
-    // let response = window.onbeforeunload = () => "Dude, are you sure you want to leave? Think of the kittens!"
-    // alert(response)
-  }
-
-  onClose = () => {
-    // this.setState({ open: false, examStarted: false, score: 0 })
-    window.location.reload();
-  }
-
-  handleNext = (event) => {
-    let questionIndex = this.state.questionIndex
-    let answers = this.state.answers
-    let answeredIndex = answers.GS[questionIndex].answeredIndex
-    answers.GS[questionIndex].answeredIndex = answeredIndex == null ? -1 : answeredIndex
-    this.setState({questionIndex: Number(questionIndex) + 1 , answers})
-  }
-
-  handlePrevious = (event) => {
-    let questionIndex = this.state.questionIndex
-    let answeredIndex = answers.GS[questionIndex].answeredIndex
-    answers.GS[questionIndex].answeredIndex = answeredIndex == null ? -1 : answeredIndex
-    this.setState({questionIndex: Number(questionIndex) - 1 , answers})
-  }
-
-  handleChangeAnswer = (answeredIndex) => {
-    let questionIndex = this.state.questionIndex
-    let answers = this.state.answers
-    answers.GS[questionIndex].answeredIndex = answeredIndex
-    this.setState({answers: answers})
-  }
-
-  handleJumpQuestion = (event) => {
-    let questionIndex = this.state.questionIndex
-    let answers = this.state.answers
-    let answeredIndex = answers.GS[questionIndex].answeredIndex
-    answers.GS[questionIndex].answeredIndex = answeredIndex == null ? -1 : answeredIndex
-    this.setState({questionIndex: Number(event.target.value), answers})
-  }
-
-  handleMarkQuestion = (event) => {
-    let questionIndex = this.state.questionIndex
-    let answers = this.state.answers
-    answers.GS[questionIndex].mark = (!answers.GS[questionIndex].mark)
-    this.setState({answers: answers}) 
-  }
-
-  startExam = (event) => {
-    this.setState({examStarted: true})
-    let Class = this
-    this.Timer = setInterval(()=>{
-      let minutes = Class.state.minutes;
-      let seconds = Class.state.seconds;
-      if (minutes === 0 && seconds === 0) {
-          this.evaluateExam(null)   
-      }
-      else if(seconds === 0) {
-        Class.setState({
-          "minutes": minutes - 1,
-          "seconds": 59
-        })
-      }
-      else {
-        Class.setState({
-          "seconds": seconds - 1
-        })      
-      }
-
-    },1000)
-  }
-
-  evaluateExam = (event) => {
-    clearInterval(this.Timer)
-    let graphData = [0, 0, 0]
-    let score = 0
-    for(let i=0; i < GSlength; i++){
-      if(answers.GS[i].answeredIndex === -1 || answers.GS[i].answeredIndex === null){
-        graphData[2] = graphData[2] + 1  
-      }
-      else if(data.GS[i].correctIndex === answers.GS[i].answeredIndex){
-        graphData[0] = graphData[0] + 1
-        score += data.GS[i].marks
-      }
-      else{
-        graphData[1] = graphData[1] + 1  
-      }
-    }
-    this.setState({result: graphData, minutes: GSlength, seconds: 0, open: true, score, confirm: false})
-  }
+  setConfirm = (value) => this.setState({confirm: value})
+  
+  setTab = (value) => this.setState({tab: value})
 
   render(){
     return (
@@ -129,94 +29,84 @@ class App extends Component {
             <b>React QUIZ</b>
           </Menu.Item>
           <Menu.Menu position="right">
-            {(this.state.examStarted) ? 
+            {(this.props.tab === 3) ? 
               <Menu.Item>
                 <Button color="red" onClick={(e) => this.setState({confirm: true})}>Finish</Button>               
-              </Menu.Item>: 
-              <Menu.Item>
-                <Button color="green" onClick={this.startExam}>Start</Button>
-              </Menu.Item>
+              </Menu.Item>: (false)
             }           
-          </Menu.Menu>
+          </Menu.Menu>          
         </Menu>
-        <br/>
-        {this.state.examStarted ? (<Grid divided>
-          <Grid.Column width={11} style = {{"marginLeft": "30px"}}>
-            <Grid.Row>
-              <Question
-                question = {data.GS[this.state.questionIndex]}
-                answer = {this.state.answers.GS[this.state.questionIndex]}
-                questionIndex = {this.state.questionIndex}
-                handleAnswerChange = {this.handleChangeAnswer}
-              />
-            </Grid.Row>
-            <Grid.Row>
-              <NavButtons
-                handleNext = {this.handleNext}
-                handlePrevious = {this.handlePrevious}
-                nextDisabled = {this.state.questionIndex === GSlength - 1 }
-                previousDisabled = {this.state.questionIndex === 0 }
-                handleAnswerChange = {this.handleChangeAnswer} 
-                handleMarkQuestion = {this.handleMarkQuestion}
-              />
-            </Grid.Row>
-          </Grid.Column>
-          <Grid.Column width={4}>
-            <Grid.Row>
-              <Profile
-                minutes = {this.state.minutes}
-                seconds = {this.state.seconds}
-              />
-            </Grid.Row>
-            <Grid.Row>
-              <QuestionPalette
-                handleJumpQuestion = { this.handleJumpQuestion }
-                totalQuestions = { GSlength }
-                answers = {answers}
-              />
-            </Grid.Row>
-            <Grid.Row>
-              <Legend/>
-            </Grid.Row>
-          </Grid.Column>
-        </Grid>):(<center><br/><br/><br/><Image src = {quizimage} alt = 'quizimage'/></center>)}
+        { (this.props.tab > 0 && this.props.tab < 3)?       
+            <div>
+              <br/>
+              <center>
+                <Step.Group ordered>
+                  <Step completed = {this.props.tab === 2}>
+                    <Step.Content>
+                      <Step.Title>Details Entering</Step.Title>
+                      <Step.Description>Enter your fullname & email</Step.Description>
+                    </Step.Content>
+                  </Step>
 
-        <Modal 
-            style={{"width": "500px"}} 
-            open={this.state.open}
-            closeOnEscape={false}
-            closeOnDimmerClick={false}
-            onClose={this.close}
-            >
-            <Modal.Header>
-              <h2 style={{"color": "green"}}>Your Score is: {this.state.score}</h2>
-            </Modal.Header>                  
-            <Modal.Content image>
-              <Modal.Description>
-                <p>
-                  <Pie data={{
-                    labels: labels, 
-                    datasets: [{
-                        data: this.state.result,
-                        backgroundColor: colors
-                    }]
-                  }} 
-                  />
-                  <br/>
-                  <center><Button color="blue" onClick={this.onClose}>Ok</Button></center>
-                </p>
-              </Modal.Description>
-            </Modal.Content>
-          </Modal> 
-          <Confirm
-          open={this.state.confirm}
-          onCancel={(e) => this.setState({confirm: false})}
-          onConfirm={(e) => this.evaluateExam()}
-          content={'Are you sure want to submit?'}
-          />
+                  <Step completed = {this.props.tab === 3}>
+                    <Step.Content>
+                      <Step.Title>Instructions</Step.Title>
+                      <Step.Description>Read the follwing instructions</Step.Description>
+                    </Step.Content>
+                  </Step>
+                </Step.Group>
+              </center>
+              <br/><br/>
+            </div>: (false)
+        }
+        {(this.props.tab === 0)
+          ?<center>
+            <br/><br/><br/>
+            <Image src = {quizimage} alt = 'quizimage'/>
+            <br/>
+            <Button primary onClick={(e) => this.props.setTab(1)}>START</Button>
+          </center>
+          :(this.props.tab === 1) 
+          ? (<UserForm {...this.props}/>)          
+          :(this.props.tab === 2)
+          ?<Instructions setTab = {this.props.setTab}/>
+          :(this.props.tab === 3)
+          ? <Quiz 
+              {...this.state} 
+              {...this.props}
+              setConfirm = {this.setConfirm}
+              setTab = {this.setTab}
+            />
+          : (false)
+        }   
       </div>
     );
   }
 }
 
-export default App;
+
+const mapStateToProps = (state) => {
+  return {
+      questions: state.quiz.questions,
+      minutes: state.quiz.minutes,
+      seconds: state.quiz.seconds,
+      tab: state.quiz.tab,
+      fullName: state.quiz.fullName,
+      emailId: state.quiz.emailId
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+      fetchQuestions: () => dispatch(QuizActions.fetchQuestions()),
+      setTime: (time) => dispatch(QuizActions.setTime(time)),
+      setTab: (tabIndex) => dispatch(QuizActions.setTab(tabIndex)),
+      setFullName: (fullName) => dispatch(QuizActions.setFullName(fullName)),
+      setEmailId: (emailId) => dispatch(QuizActions.setEmailId(emailId))
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

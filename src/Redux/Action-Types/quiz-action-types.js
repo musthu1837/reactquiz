@@ -1,0 +1,5 @@
+export const FETCH_QUESTIONS = "FETCH_QUESTIONS"
+export const SET_TIME = "SET_TIME"
+export const SET_TAB = "SET_TAB"
+export const SET_FULL_NAME = "SET_FULL_NAME"
+export const SET_EMAIL_ID = "SET_EMAIL_ID"
