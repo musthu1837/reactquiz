@@ -3,7 +3,7 @@ import {Radio} from 'semantic-ui-react'
 import './question.css';
 
 const Question = (props) => {
-  const { question, questionIndex, answer, handleAnswerChange } = props
+  const { question, questionIndex, handleAnswerChange } = props
   return(
     <div className='qs-container'>
       <div className='qs-number'>
@@ -19,7 +19,7 @@ const Question = (props) => {
               return(
                 <div key={index}>
                   <Radio 
-                    checked = { index === answer.answeredIndex }
+                    checked = { index === question.answeredIndex }
                     value = { index }
                     label = {question.answers[index]} 
                     onChange = {(e, { name, value}) => handleAnswerChange(Number(value))}

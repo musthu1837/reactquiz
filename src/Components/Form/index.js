@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Checkbox, Form, Container } from 'semantic-ui-react'
+import { Form } from 'semantic-ui-react'
 import './form.css'
 class UserForm extends React.Component{
 
@@ -10,11 +10,15 @@ class UserForm extends React.Component{
     }
   }
 
-  onNext = (e) => {
-    e.preventDefault()
-    if(this.props.fullName === "" || this.props.emailId === "")
-      return
-    this.props.setTab(2)
+  validateEmail = () => {
+      if(this.props.emailId === "" )
+        return true
+      else {
+        let REGX = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/
+        if(!REGX.test(this.props.emailId))
+          return true
+      }
+      return false
   }
   render(){
     console.log(this.props.emailId.split("@"))
@@ -24,20 +28,19 @@ class UserForm extends React.Component{
             <Form.Field error={this.props.fullName === ""}>
               <label>Full name:</label>
               <input 
-                placeholder = 'First Name' 
+                placeholder = 'Enter your full name' 
                 value = {this.props.fullName}
                 onChange = {(e) => this.props.setFullName(e.target.value)}
               />
             </Form.Field>
-            <Form.Field error={this.props.emailId === ""  || this.props.emailId.split("@").length < 2}>
+            <Form.Field error={this.validateEmail()}>
               <label>Email:</label>
               <input 
-                placeholder = 'Last Name' 
+                placeholder = 'Enter your email address' 
                 value = {this.props.emailId}
                 onChange={(e) => this.props.setEmailId(e.target.value)}
               />
             </Form.Field>
-            <Button onClick= {this.onNext}>Next</Button>
           </Form>
         </div>
           )

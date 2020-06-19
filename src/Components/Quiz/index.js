@@ -6,73 +6,64 @@ import NavButtons from '../NavButtons'
 import Legend from '../Legend'
 import QuestionPalette from '../QuestionPalette'
 import Profile from '../Profile'
-import answers from '../../answers.json'
-const labels = ["Right answers", "Wrong answers", "Unanswered"]
-const colors = ['green', 'red', 'grey'] 
-
+import api from '../../api'
 class QUIZ extends Component {
   constructor(props){
     super(props);
     this.state = {
-      questionIndex: 0,
-      answers: answers,
       result: [0, 0, 0],
       open: false,
       score: 0
     }
     this.Timer = null;
+    this.labels = ["Right answers", "Wrong answers", "Unanswered"]
+    this.colors = ['green', 'red', 'grey'] 
+
   }
 
   componentDidMount(){
     this.props.fetchQuestions()
     this.startExam()
   }
+
   onClose = () => {
     window.location.reload()
   }
+
   handleNext = (event) => {
-    let questionIndex = this.state.questionIndex
-    let answers = this.state.answers
-    let answeredIndex = answers.GS[questionIndex].answeredIndex
-    answers.GS[questionIndex].answeredIndex = answeredIndex == null ? -1 : answeredIndex
-    this.setState({questionIndex: Number(questionIndex) + 1 , answers})
+    let questionIndex = this.props.questionIndex
+    let questions = this.props.questions
+    let answeredIndex = questions[questionIndex].answeredIndex
+    answeredIndex = answeredIndex === undefined ? -1 : answeredIndex
+    this.props.updateAnswer(answeredIndex)
+    questionIndex++;
+    this.props.updateQuestionIndex(questionIndex)
   }
 
   handlePrevious = (event) => {
-    let questionIndex = this.state.questionIndex
-    let answeredIndex = answers.GS[questionIndex].answeredIndex
-    answers.GS[questionIndex].answeredIndex = answeredIndex == null ? -1 : answeredIndex
-    this.setState({questionIndex: Number(questionIndex) - 1 , answers})
-  }
-
-  handleChangeAnswer = (answeredIndex) => {
-    let questionIndex = this.state.questionIndex
-    let answers = this.state.answers
-    answers.GS[questionIndex].answeredIndex = answeredIndex
-    this.setState({answers: answers})
+    let questionIndex = this.props.questionIndex
+    let questions = this.props.questions
+    let answeredIndex = questions[questionIndex].answeredIndex
+    answeredIndex = answeredIndex === undefined ? -1 : answeredIndex
+    this.props.updateAnswer(answeredIndex)
+    questionIndex--;
+    this.props.updateQuestionIndex(questionIndex)
   }
 
   handleJumpQuestion = (event) => {
     let qIndex = Number(event.target.value)
-    let questionIndex = this.state.questionIndex
+    let questionIndex = this.props.questionIndex
+    let questions = this.props.questions
     if(qIndex === questionIndex) return 
-    let answers = this.state.answers
-    let answeredIndex = answers.GS[questionIndex].answeredIndex
-    answers.GS[questionIndex].answeredIndex = answeredIndex == null ? -1 : answeredIndex
-    this.setState({questionIndex: qIndex, answers})
-  }
-
-  handleMarkQuestion = (event) => {
-    let questionIndex = this.state.questionIndex
-    let answers = this.state.answers
-    answers.GS[questionIndex].mark = (!answers.GS[questionIndex].mark)
-    this.setState({answers: answers}) 
+    let answeredIndex = questions[questionIndex].answeredIndex
+    answeredIndex = answeredIndex === undefined ? -1 : answeredIndex
+    this.props.updateAnswer(answeredIndex)
+    this.props.updateQuestionIndex(qIndex)
   }
 
   startExam = () => {
     this.setState({examStarted: true})
     this.Timer = setInterval(()=>{
-      debugger
       let minutes = this.props.minutes
       let seconds = this.props.seconds
       if (minutes === 0 && seconds === 0 ) {
@@ -96,13 +87,14 @@ class QUIZ extends Component {
 
   evaluateExam = () => {
     clearInterval(this.Timer)
+    let questions = this.props.questions
     let graphData = [0, 0, 0]
     let score = 0
     for(let i=0; i < this.props.questions.length; i++){
-      if(answers.GS[i].answeredIndex === -1 || answers.GS[i].answeredIndex === null){
+      if(questions[i].answeredIndex === -1 || questions[i].answeredIndex === undefined){
         graphData[2] = graphData[2] + 1  
       }
-      else if(this.props.questions[i].correctIndex === answers.GS[i].answeredIndex){
+      else if(questions[i].correctIndex === questions[i].answeredIndex){
         graphData[0] = graphData[0] + 1
         score += this.props.questions[i].marks
       }
@@ -110,50 +102,68 @@ class QUIZ extends Component {
         graphData[1] = graphData[1] + 1  
       }
     }
-    this.setState({result: graphData, open: true, score})
+
+    api.post('/responses', {
+      fullName: this.props.fullName,
+      emailId: this.props.emailId,
+      score: score,
+      rightAnswered: graphData[0],
+      wrongAnswered: graphData[1],
+      notAnswered: graphData[2]
+    })
+    .then((response) => {
+      debugger
+      console.log("RESPONSE :::>>>>>>>>>>>>>", response)
+      if(response.status === 201){
+        this.setState({result: graphData, open: true, score})
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
     this.props.setTime({ minutes: 0, seconds: 0})
     this.props.setConfirm(false)
   }
 
   render(){
+    const { questions, questionIndex, minutes, seconds} = this.props
     return (
       <div>
-        {((this.props.questions)&&(this.props.questions.length > 0))?
+        {((questions)&&(questions.length > 0))?
         <div className="quiz">
             <Grid divided>
               <Grid.Column width={11} style = {{"marginLeft": "30px"}}>
                 <Grid.Row>
                   <Question
-                    question = {this.props.questions[this.state.questionIndex]}
-                    answer = {this.state.answers.GS[this.state.questionIndex]}
-                    questionIndex = {this.state.questionIndex}
-                    handleAnswerChange = {this.handleChangeAnswer}
+                    question = {questions[questionIndex]}
+                    questionIndex = {questionIndex}
+                    handleAnswerChange = {this.props.updateAnswer}
                   />
                 </Grid.Row>
                 <Grid.Row>
                   <NavButtons
                     handleNext = {this.handleNext}
                     handlePrevious = {this.handlePrevious}
-                    nextDisabled = {this.state.questionIndex === this.props.questions.length - 1 }
-                    previousDisabled = {this.state.questionIndex === 0 }
-                    handleAnswerChange = {this.handleChangeAnswer} 
-                    handleMarkQuestion = {this.handleMarkQuestion}
+                    nextDisabled = {questionIndex === questions.length - 1 }
+                    previousDisabled = {questionIndex === 0 }
+                    handleAnswerChange = {this.props.updateAnswer} 
+                    handleMarkQuestion = {this.props.setMark}
                   />
                 </Grid.Row>
               </Grid.Column>
               <Grid.Column width={4}>
                 <Grid.Row>
                   <Profile
-                    minutes = {this.props.minutes}
-                    seconds = {this.props.seconds}
+                    minutes = {minutes}
+                    seconds = {seconds}
                     {...this.props}
                   />
                 </Grid.Row>
                 <Grid.Row>
                   <QuestionPalette
                     handleJumpQuestion = { this.handleJumpQuestion }
-                    totalQuestions = { this.props.questions.length }
-                    answers = {answers}
+                    totalQuestions = { questions.length }
+                    questions = {questions}
                   />
                 </Grid.Row>
                 <Grid.Row>
@@ -175,10 +185,10 @@ class QUIZ extends Component {
                   <Modal.Description>
                     <p>
                       <Pie data={{
-                        labels: labels, 
+                        labels: this.labels, 
                         datasets: [{
                             data: this.state.result,
-                            backgroundColor: colors
+                            backgroundColor: this.colors
                         }]
                       }} 
                       />

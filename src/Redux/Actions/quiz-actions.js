@@ -36,3 +36,25 @@ export const setEmailId = (emailId) => {
         type: QUIZ_ACTION_TYPES.SET_EMAIL_ID
     }
 }
+
+export const updateAnswer = (answer) => {
+    return {
+        payload: answer,
+        type: QUIZ_ACTION_TYPES.UPDATE_ANSWER
+    }
+}
+
+
+export const updateQuestionIndex = (qIndex) => {
+    return {
+        payload: qIndex,
+        type: QUIZ_ACTION_TYPES.UPDATE_QUESTION_INDEX
+    }
+}
+
+export const setMark = (marked) => {
+    return {
+        payload: marked,
+        type: QUIZ_ACTION_TYPES.SET_MARK
+    }
+}

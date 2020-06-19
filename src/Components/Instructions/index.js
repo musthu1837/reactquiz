@@ -1,5 +1,5 @@
 import React from 'react'
-import { Message, Button } from 'semantic-ui-react'
+import { Message } from 'semantic-ui-react'
 import './instructions.css'
 const MessageExampleList = ({setTab}) => {
 
@@ -12,7 +12,6 @@ const MessageExampleList = ({setTab}) => {
                 <Message.Item>Make sure you have proper internet connection</Message.Item>
                 </Message.List>
             </Message>
-            <Button onClick = {(e) => setTab(3)} primary>Begin</Button>
         </div>
     )
 }

@@ -18,7 +18,7 @@ const NavButtons = (props) => {
           </Button>
           <Button 
             color="black"
-            onClick = {(event) => handleAnswerChange(-1 )}
+            onClick = {(event) => handleAnswerChange(-1)}
           >
             Clear Response
           </Button>
