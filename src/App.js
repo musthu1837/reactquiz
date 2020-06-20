@@ -65,7 +65,7 @@ class App extends Component {
                     </Step.Content>
                   </Step>
                 </Step.Group>
-                <Icon disabled={this.props.tab > 1 && this.validateForm()} onClick={(e) => this.props.setTab(this.props.tab+1)} color={"blue"} style={{position: "relative",top: "-7px"}} name={"angle right"} size={"huge"}/>
+                <Icon disabled={this.props.tab === 1 && this.validateForm()} onClick={(e) => this.props.setTab(this.props.tab+1)} color={"blue"} style={{position: "relative",top: "-7px"}} name={"angle right"} size={"huge"}/>
               </center>
               <br/><br/>
             </div>: (false)

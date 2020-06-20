@@ -3,7 +3,7 @@ import * as QUIZ_ACTION_TYPES  from '../Action-Types/quiz-action-types'
 
 
 export const fetchQuestions = () => async dispatch => {
-    const response = await axios.get('questions')
+    const response = await axios.get('/v1/questions')
     dispatch({
         payload: response.data,
         type: QUIZ_ACTION_TYPES.FETCH_QUESTIONS

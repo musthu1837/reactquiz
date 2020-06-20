@@ -103,7 +103,7 @@ class QUIZ extends Component {
       }
     }
 
-    api.post('/responses', {
+    api.post('/v1/users', {
       fullName: this.props.fullName,
       emailId: this.props.emailId,
       score: score,
